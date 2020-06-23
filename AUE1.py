@@ -51,11 +51,11 @@ class AUE1(ClassifierMixin, BaseEnsemble):
 
         # Save scores
         candidate_msei = np.mean(scores)
-        candidate_weight = 1 /  (candidate_msei + 0.0000000001)
+        candidate_weight = mser - candidate_msei
 
         # Calculate weights of current ensemble
         # self.weights_ = [mser - self.msei_score(clf, self.X_, self.y_) for clf in self.ensemble_]
-        self.weights_ = [1/(self.msei_score(clf, self.X_, self.y_)+0.0000000001) for clf in self.ensemble_]
+        self.weights_ = [(1/(self.msei_score(clf, self.X_, self.y__)+0.0000000001)) for clf in self.ensemble_]
 
         # Add new model
         self.ensemble_.append(candidate)
@@ -66,6 +66,28 @@ class AUE1(ClassifierMixin, BaseEnsemble):
             worst_idx = np.argmin(self.weights_)
             del self.ensemble_[worst_idx]
             del self.weights_[worst_idx]
+            
+               # print("CUDA WIANKI AUE")
+        comparator = 1 / mser
+        for i, clf in enumerate(self.ensemble_):
+            if i != len(self.ensemble_) - 1:
+                if self.weights_[i] > comparator:
+                    clf.partial_fit(X, y)
+            else: break
+            
+                
+            """
+            print(
+                i,
+                "%.3f" % self.weights_[i],
+                "%.3f" % comparator,
+                "%.3f" % mser,
+                "TU" if self.weights_[i] > comparator else "",
+            )
+            """
+            #clf.partial_fit(X, y)
+            
+            
 
         return self
 
