@@ -51,7 +51,7 @@ class AUE1(ClassifierMixin, BaseEnsemble):
 
         # Save scores
         candidate_msei = np.mean(scores)
-        candidate_weight = mser - candidate_msei
+        candidate_weight = 1 /  (candidate_msei + 0.0000000001)
 
         # Calculate weights of current ensemble
         # self.weights_ = [mser - self.msei_score(clf, self.X_, self.y_) for clf in self.ensemble_]
